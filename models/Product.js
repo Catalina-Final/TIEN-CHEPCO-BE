@@ -3,28 +3,38 @@ const Schema = mongoose.Schema;
 
 const productSchema = mongoose.Schema(
     {
-        product: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "ListProducts",
-          required: [true, "Product need a name from list product"],
-        },
+      name: {
+        type: String,
+        required: [true, "Name of product is required!"],
+        trim: true,
+        unique: true,
+        // maxlength: [
+        //   40,
+        //   "A name of product must have less or equal then 40 characters",
+        // ],
+        // minlength: [
+        //   4,
+        //   "A name of product must have greater or equal then 10 characters",
+        // ],
+      },
         description: {
           type: String,
           trim: true,
           required: [true, "Product need a description"],
         },
-        color: {
-          type: String,
-          required: [true, "Product need a color"],
-          trim: true,
-          lowercase: true,
-        },
+        
         type: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Category",
           required: [true, "Product need a category"],
         },
-        slug: String,
+        ratingsAverage: {
+          type: Number,
+          default: 4.5,
+          min: [1, "Rating must be above 1.0"],
+          max: [5, "Rating must be below 5.0"],
+          set: (val) => Math.round(val * 10) / 10,
+        },
         inStock: {
           type: Number,
           required: [true, "A product mush have a quantity in stock."],
@@ -36,12 +46,24 @@ const productSchema = mongoose.Schema(
           default: 30,
           min: [0, "Availability must be greater or equal to 0."],
         },
+        price: {
+          type: Number,
+          required: [true, "Price is required."],
+          trim: true,
+        },
+        priceDiscount: {
+          type: Number,
+          min: 0,
+          max: 100
+        },
         images: [String],
         createdBy: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "User",
           required: true,
         },
+        reviewCount: { type: Number, default: 0 },
+        isDeleted: { type: Boolean, default: false, select: false },
       },
       {
         timestamps: true,
@@ -50,5 +72,6 @@ const productSchema = mongoose.Schema(
       }
   );
 
-  productSchema.plugin(require("./plugins/isDeletedFalse"));
+productSchema.plugin(require("./plugins/isDeletedFalse"));
+
 module.exports = mongoose.model("Product", productSchema);

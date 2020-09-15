@@ -8,10 +8,8 @@ const categorySchema = mongoose.Schema(
           enum: ["milk", "tea"],
           required: [true, "Category need a type!"],
           unique: true
-        },
-        slug: {
-          type: String,
         }
+    
       },
       {
         timestamps: true,

@@ -8,19 +8,19 @@ const listProductsSchema = mongoose.Schema(
           required: [true, "Name of product is required!"],
           trim: true,
           unique: true,
-          maxlength: [
-            40,
-            "A name of product must have less or equal then 40 characters",
-          ],
-          minlength: [
-            4,
-            "A name of product must have greater or equal then 10 characters",
-          ],
+          // maxlength: [
+          //   40,
+          //   "A name of product must have less or equal then 40 characters",
+          // ],
+          // minlength: [
+          //   4,
+          //   "A name of product must have greater or equal then 10 characters",
+          // ],
         },
-        imageCover: {
-          type: String,
-          required: [true, "A product must have a cover image"],
-        },
+        // imageCover: {
+        //   type: String,
+        //   required: [true, "A product must have a cover image"],
+        // },
         ratingsAverage: {
           type: Number,
           default: 4.5,
@@ -33,7 +33,7 @@ const listProductsSchema = mongoose.Schema(
           ref: "Category",
           required: true,
         },
-        slug: String,
+        
         ratingsQuantity: {
           type: Number,
           default: 0,
