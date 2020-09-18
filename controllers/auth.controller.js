@@ -5,25 +5,32 @@ const {
 } = require("../helpers/utils.helpers");
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
+const Order = require("../models/Order");
 const authController = {};
+
+const createNewCart = require("../helpers/khoa")
+
 
 authController.loginWithEmail = catchAsync(async (req, res, next) => {
     const { email, password } = req.body;
-    console.log("check mail ", email)
-    const user = await User.findOne({ email }, "+password");
-    console.log("chekc user", user)
+
+    let user = await User.findOne({ email }, "+password");
+
     if (!user)
         return next(new AppError(400, "Invalid credentials"));
 
-    const isMatch = await bcrypt.compare(password+"", user.password);  //chuyen so thanh string
+    const isMatch = await bcrypt.compare(password + "", user.password);  //chuyen so thanh string
     if (!isMatch) return next(new AppError(400, "Wrong password"));
 
     accessToken = await user.generateToken();
+    const foo = await createNewCart(user);
+    user = foo[0]
+    const cart = foo[1]
     return sendResponse(
         res,
         200,
         true,
-        { user, accessToken },
+        { user, cart, accessToken },
         null,
         "Login successful"
     );
@@ -55,11 +62,14 @@ authController.loginWithFacebookOrGoogle = catchAsync(
         }
 
         const accessToken = await user.generateToken();
+        const foo = await createNewCart(user);
+        user = foo[0]
+        const cart = foo[1]
         return sendResponse(
             res,
             200,
             true,
-            { user, accessToken },
+            { user, cart, accessToken },
             null,
             "Login successful"
         );

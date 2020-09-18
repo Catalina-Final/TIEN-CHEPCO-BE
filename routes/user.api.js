@@ -35,9 +35,12 @@ router.put("/me", authMiddleware.loginRequired, userController.updateProfile);
  * @access Login required
  */
 router.get("/me", authMiddleware.loginRequired, userController.getCurrentUser);
-
-
-
+//   /**
+//  * @route post api/users/order
+//  * @description Add to cart
+//  * @access Login required
+//  */
+// router.post("/cart", authMiddleware.loginRequired, userController.addToOrder);
 
 
 module.exports = router;

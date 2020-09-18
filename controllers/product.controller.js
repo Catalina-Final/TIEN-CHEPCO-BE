@@ -10,7 +10,7 @@ const Category = require("../models/Category");
 const productController = {};
 
 productController.getProducts = catchAsync(async (req, res, next) => {
-    const totalProducts = await Product.find()
+    const totalProducts = await Product.find().populate("type")
 
 
     return sendResponse(res, 200, true, { totalProducts }, null, "get all products success"); //, totalPages 
@@ -56,7 +56,7 @@ productController.createNewProduct = catchAsync(async (req, res, next) => {
 productController.updateSingleProduct = catchAsync(async (req, res, next) => {
     const user = req.userId;
     const productId = req.params.id;
-    const { 
+    const {
         name,
         description,
         category,
@@ -64,22 +64,23 @@ productController.updateSingleProduct = catchAsync(async (req, res, next) => {
         price,
         availability,
         ratingsAverage
-        } = req.body;
+    } = req.body;
 
     const type = await Category.findOne({ type: category })
-
+    console.log(user)
+    console.log(productId)
     const product = await Product.findOneAndUpdate(
         { _id: productId, createdBy: user },
-        { 
-        name,
-        description,
-        type,
-        ratingsAverage,
-        inStock,
-        availability,
-        price,
-        createdBy: user
-         },
+        {
+            name,
+            description,
+            type,
+            ratingsAverage,
+            inStock,
+            availability,
+            price,
+            createdBy: user
+        },
         { new: true }
     );
     if (!product)
@@ -97,7 +98,7 @@ productController.deleteSingleProduct = catchAsync(async (req, res, next) => {
     const productId = req.params.id;
     console.log("check info", user)
     console.log("check info", productId)
-    
+
     const product = await Product.findOneAndUpdate(
         { _id: productId, createdBy: user },
         { isDeleted: true },
