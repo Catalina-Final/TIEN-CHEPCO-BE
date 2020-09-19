@@ -74,4 +74,28 @@ router.delete(
   productController.deleteSingleProduct
 );
 
+/**
+ * @route post api/products/cart
+ * @body {product: ObjectId, quantity: Number}
+ * @description Add to cart
+ * @access Login required
+ */
+router.post("/cart", authMiddleware.loginRequired, productController.addToCart);
+
+/**
+ * @route delete api/products/cart/:id
+ * @description remove product id
+ * @access Login required
+ */
+router.delete("/cart/:id", authMiddleware.loginRequired, productController.removeProductFromCart);
+
+/**
+ * @route put api/products/cart/:id
+ * @body {quantity: Number}
+ * @description update cart
+ * @access Login required
+ */
+router.put("/cart/:id", authMiddleware.loginRequired, productController.updateCart);
+
+
 module.exports = router;

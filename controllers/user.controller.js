@@ -9,6 +9,7 @@ const bcrypt = require("bcryptjs");
 
 const jwt = require("jsonwebtoken");
 const Product = require("../models/Product");
+const Cart = require("../models/Cart");
 
 const userController = {};
 
@@ -19,7 +20,7 @@ userController.register = catchAsync(async (req, res, next) => {
     return next(new AppError(409, "User already exists", "Register Error"));
 
   const salt = await bcrypt.genSalt(10);
-  password = await bcrypt.hash(password+"", salt);  //chuyen so thanh string
+  password = await bcrypt.hash(password + "", salt);  //chuyen so thanh string
   user = await User.create({
     name,
     email,
@@ -63,11 +64,15 @@ userController.updateProfile = catchAsync(async (req, res, next) => {
 userController.getCurrentUser = catchAsync(async (req, res, next) => {
   const userId = req.userId;
   const user = await User.findById(userId);
+  let cart = await Cart.findOne({ createdBy: userId }).populate("products.product")
+  if (!cart) {
+    cart = { products: [] };
+  }
   return sendResponse(
     res,
     200,
     true,
-    user,
+    { user, cart },
     null,
     "Get current user successful"
   );
