@@ -34,12 +34,14 @@ productController.createNewProduct = catchAsync(async (req, res, next) => {
         name,
         description,
         category,
+        ratingsAverage,
         inStock,
-        price,
         availability,
-        ratingsAverage } = req.body;
-    const type = await Category.findOne({ type: category })
+        price
 
+    } = req.body;
+    const type = await Category.findOne({ type: category })
+    let { images } = req.body;
 
     const newProduct = await Product.create({
         name,
@@ -49,6 +51,7 @@ productController.createNewProduct = catchAsync(async (req, res, next) => {
         inStock,
         availability,
         price,
+        images,
         createdBy: user
     });
 
