@@ -37,11 +37,11 @@ productController.createNewProduct = catchAsync(async (req, res, next) => {
         ratingsAverage,
         inStock,
         availability,
-        price
+        price,
+        images
 
     } = req.body;
     const type = await Category.findOne({ type: category })
-    let { images } = req.body;
 
     const newProduct = await Product.create({
         name,
@@ -65,10 +65,11 @@ productController.updateSingleProduct = catchAsync(async (req, res, next) => {
         name,
         description,
         category,
+        ratingsAverage,
         inStock,
-        price,
         availability,
-        ratingsAverage
+        price,
+        images
     } = req.body;
 
     const type = await Category.findOne({ type: category })
@@ -83,6 +84,7 @@ productController.updateSingleProduct = catchAsync(async (req, res, next) => {
             inStock,
             availability,
             price,
+            images,
             createdBy: user
         },
         { new: true }
