@@ -27,6 +27,8 @@ productController.getSingleProduct = catchAsync(async (req, res, next) => {
     return sendResponse(res, 200, true, product, null, "get single product success");
 });
 
+
+
 productController.createNewProduct = catchAsync(async (req, res, next) => {
     const user = req.userId;
 
