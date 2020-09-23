@@ -132,31 +132,31 @@ productController.addToCart = catchAsync(async (req, res, next) => {
             createdBy: userId
         })
         await Cart.populate(cart, { path: "products.product" })
+
         return sendResponse(res, 200, true, cart, null, "Create Cart Successful")
-    } else {
-        console.log(cart)
-        cart = cart.toJSON();
-        const item = cart.products.find((item) => item.product.equals(product));
-        if (item) {
-            cart.products = cart.products.map((item) => {
-                if (!item.product.equals(product)) return item;
-                return { ...item, quantity: item.quantity + quantity };
-            });
-        } else {
-            cart.products = [...cart.products, { product, quantity }];
-        }
-
-        cart = await Cart.findByIdAndUpdate(
-            cart._id,
-            {
-                $set: { products: cart.products },
-            },
-            { new: true }
-        ).populate("products.product");
-
-        return sendResponse(res, 200, true, cart, null, "Update Cart Successful")
-
     }
+
+    console.log(cart)
+    cart = cart.toJSON();
+    const item = cart.products.find((item) => item.product.equals(product));
+    if (item) {
+        cart.products = cart.products.map((item) => {
+            if (!item.product.equals(product)) return item;
+            return { ...item, quantity: item.quantity + quantity };
+        });
+    } else {
+        cart.products = [...cart.products, { product, quantity }];
+    }
+
+    cart = await Cart.findByIdAndUpdate(
+        cart._id,
+        {
+            $set: { products: cart.products },
+        },
+        { new: true }
+    ).populate("products.product");
+
+    return sendResponse(res, 200, true, cart, null, "Update Cart Successful")
 })
 
 productController.removeProductFromCart = catchAsync(async (req, res, next) => {

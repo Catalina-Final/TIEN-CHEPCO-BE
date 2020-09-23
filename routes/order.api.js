@@ -42,19 +42,22 @@ router.get(
 
     orderController.UserGetOrders
 );
+
 /**
- * @route GET api/orders/:id
- * @description Get each order pending from user login
- * @access login required
+ * @route PUT api/orders/:id
+ * @description admin Update order
+ * @access Login required
  */
-router.get(
+router.put(
     "/:id",
     authMiddleware.loginRequired,
     validators.validate([
         param("id").exists().isString().custom(validators.checkObjectId),
+
     ]),
-    orderController.getSinglePendingOrder
+    orderController.updateOrder
 );
+
 
 
 

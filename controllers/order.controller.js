@@ -31,6 +31,7 @@ orderController.createOrder = catchAsync(async (req, res, next) => {
         },
         paid: false
     });
+    await Cart.remove(cart);
 
     return sendResponse(res, 200, true, order, null, "get shipping info successful");
 
@@ -38,12 +39,12 @@ orderController.createOrder = catchAsync(async (req, res, next) => {
 // orderController.AdminGetOrders
 orderController.AdminGetOrders = catchAsync(async (req, res, next) => {
     const user = req.userId
-    const totalPendingOrders = await Order.find({ paid: false })
+    const totalOrders = await Order.find({})
     return sendResponse(
         res,
         200,
         true,
-        { totalPendingOrders, user },
+        { totalOrders, user },
         null,
         "admin get all orders success"
     )
@@ -51,25 +52,30 @@ orderController.AdminGetOrders = catchAsync(async (req, res, next) => {
 
 orderController.UserGetOrders = catchAsync(async (req, res, next) => {
     const user = req.userId
-    const totalPendingOrders = await Order.find({ paid: false, user })
+    const totalOrders = await Order.find({ user })
     return sendResponse(
         res,
         200,
         true,
-        { totalPendingOrders, user },
+        { totalOrders, user },
         null,
         "user get all orders success"
     )
 })
+orderController.updateOrder = catchAsync(async (req, res, next) => {
+    const orderId = req.params.id
 
-orderController.getSinglePendingOrder = catchAsync(async (req, res, next) => {
-    const user = req.userId
-    let order = await Order.findById(req.params.id)  //.populate("user");
-    console.log("check", order)
-    if (!order)
-        return next(new AppError(404, "Order not found"));
-    order = order.toJSON();
+    const order = await Order.findOneAndUpdate({ _id: orderId, paid: false }, { $set: { paid: true } }, { new: true })
+    if (!order) return next(new AppError(404, "Order not found or already paid"))
+    return sendResponse(
+        res,
+        200,
+        true,
+        null,
+        null,
+        "Update order status"
+    )
 
-    return sendResponse(res, 200, true, order, null, "get single order success");
-});
+})
+
 module.exports = orderController;
