@@ -7,6 +7,10 @@ const orderSchema = mongoose.Schema({
     ref: 'User',
     required: [true, 'Order must have a UserId']
   },
+  totalPrice: {
+    type: Number,
+    required: true,
+  },
   products: [Schema(
     {
       product: {

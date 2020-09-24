@@ -20,10 +20,12 @@ orderController.createOrder = catchAsync(async (req, res, next) => {
     } = req.body;
     //lay info khach nhap va luu vao database cuar user
     // const order = {_id:..., user:ObjectId, products:[{}, {}, {product, quantity, ...}], shipping: {...}, paid: true/false }
-    const cart = await Cart.findOne({ createdBy: user }).populate("products.product", "name price")
+    const cart = await Cart.findOne({ createdBy: user, }).populate("products.product", "name price")
+    const totalPrice = cart.products.reduce((acc, curr) => acc + curr.product.price * curr.quantity, 0)
     const order = await Order.create({
         user,
         products: cart.products,
+        totalPrice,
         shipping: {
             fullName,
             phone,
