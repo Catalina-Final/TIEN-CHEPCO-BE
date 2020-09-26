@@ -58,11 +58,6 @@ const productSchema = mongoose.Schema(
       max: 100
     },
     images: [String],
-    createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
     reviewCount: { type: Number, default: 0 },
     isDeleted: { type: Boolean, default: false, select: false },
   },

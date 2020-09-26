@@ -26,8 +26,7 @@ router.post("/",
  */
 router.get(
     "/admin/",
-    authMiddleware.loginRequired,
-
+    authMiddleware.isAdminRequired,
     orderController.AdminGetOrders
 );
 
@@ -50,7 +49,7 @@ router.get(
  */
 router.put(
     "/:id",
-    authMiddleware.loginRequired,
+    authMiddleware.isAdminRequired,
     validators.validate([
         param("id").exists().isString().custom(validators.checkObjectId),
 

@@ -1,4 +1,6 @@
+const User = require("../models/User")
 const jwt = require("jsonwebtoken");
+
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 const { AppError } = require("../helpers/utils.helpers");
 const authMiddleware = {};
@@ -19,7 +21,7 @@ authMiddleware.loginRequired = (req, res, next) => {
           );
         }
       }
-      // console.log(payload);
+
       req.userId = payload._id;
     });
     next();
@@ -27,5 +29,36 @@ authMiddleware.loginRequired = (req, res, next) => {
     next(error);
   }
 };
+authMiddleware.isAdminRequired = (req, res, next) => {
+
+  try {
+
+    const tokenString = req.headers.authorization;
+
+    if (!tokenString)
+      return next(new AppError(401, "Token not found", "Validation Error"));
+    const token = tokenString.replace("Bearer ", "");
+    jwt.verify(token, JWT_SECRET_KEY, async (err, payload) => {
+      if (err) {
+        if (err.name === "TokenExpiredError") {
+          return next(new AppError(401, "Token expired", "Validation Error"));
+        }
+        return next(
+          new AppError(401, "Token is invalid", "Validation Error")
+        );
+      }
+
+      const user = await User.findById(payload._id)
+
+      if (user.roles !== "admin") {
+        return next(
+          new AppError(401, "No admin", "not admin"))
+      }
+    });
+    next()
+  } catch (error) {
+    next(error)
+  }
+}
 
 module.exports = authMiddleware;

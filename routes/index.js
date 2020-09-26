@@ -9,6 +9,9 @@ router.get('/', function (req, res, next) {
 // user Api
 const userApi = require('./user.api')
 router.use('/users', userApi);
+// admin Api
+const adminApi = require('./admin.api')
+router.use('/admin', adminApi);
 
 // authApi
 const authApi = require("./auth.api");

@@ -14,7 +14,6 @@ const productController = {};
 productController.getProducts = catchAsync(async (req, res, next) => {
     const totalProducts = await Product.find()
 
-
     return sendResponse(res, 200, true, { totalProducts }, null, "get all products success"); //, totalPages 
 });
 
@@ -28,99 +27,6 @@ productController.getSingleProduct = catchAsync(async (req, res, next) => {
 });
 
 
-
-productController.createNewProduct = catchAsync(async (req, res, next) => {
-    const user = req.userId;
-
-    const {
-        name,
-        description,
-        category,
-        ratingsAverage,
-        inStock,
-        availability,
-        price,
-        images
-
-    } = req.body;
-    const type = await Category.findOne({ type: category })
-
-    const newProduct = await Product.create({
-        name,
-        description,
-        type,
-        ratingsAverage,
-        inStock,
-        availability,
-        price,
-        images,
-        createdBy: user
-    });
-
-    return sendResponse(res, 200, true, newProduct, null, "Create new product successful");
-});
-
-productController.updateSingleProduct = catchAsync(async (req, res, next) => {
-    const user = req.userId;
-    const productId = req.params.id;
-    const {
-        name,
-        description,
-        category,
-        ratingsAverage,
-        inStock,
-        availability,
-        price,
-        images
-    } = req.body;
-
-    const type = await Category.findOne({ type: category })
-
-    const product = await Product.findOneAndUpdate(
-        { _id: productId, createdBy: user },
-        {
-            name,
-            description,
-            type,
-            ratingsAverage,
-            inStock,
-            availability,
-            price,
-            images,
-            createdBy: user
-        },
-        { new: true }
-    );
-    if (!product)
-        return next(
-            new AppError(
-                400,
-                "Product not found or User not authorized"
-            )
-        );
-    return sendResponse(res, 200, true, product, null, "Update product successful");
-});
-
-productController.deleteSingleProduct = catchAsync(async (req, res, next) => {
-    const user = req.userId;
-    const productId = req.params.id;
-    console.log("check info", user)
-    console.log("check info", productId)
-
-    const product = await Product.findOneAndUpdate(
-        { _id: productId, createdBy: user },
-        { isDeleted: true },
-        { new: true }
-    );
-    if (!product)
-        return next(
-            new AppError(
-                400,
-                "Product not found or User not authorized"
-            )
-        );
-    return sendResponse(res, 200, true, null, null, "Delete product successful");
-});
 
 productController.addToCart = catchAsync(async (req, res, next) => {
     const userId = req.userId;
@@ -136,7 +42,7 @@ productController.addToCart = catchAsync(async (req, res, next) => {
         return sendResponse(res, 200, true, cart, null, "Create Cart Successful")
     }
 
-    console.log(cart)
+
     cart = cart.toJSON();
     const item = cart.products.find((item) => item.product.equals(product));
     if (item) {
@@ -214,23 +120,5 @@ productController.updateCart = catchAsync(async (req, res, next) => {
     return sendResponse(res, 200, true, cart, null, "Update Cart Successful")
 })
 
-// productController.updateCart = catchAsync(async (req, res, next) => {
-//     const userId = req.userId;
-//     let cart = await Cart.findOne({ createdBy: userId })
-//     if (!cart) {
-//         return next(new AppError(400, "Cart not found", "Remove Product Error"))
-//     }
-
-//     const { products } = req.body;
-//     cart = await Cart.findByIdAndUpdate(
-//         cart._id,
-//         {
-//             $set: { products: products },
-//         },
-//         { new: true }
-//     ).populate("products.product");
-
-//     return sendResponse(res, 200, true, cart, null, "Update Cart Successful")
-// })
 
 module.exports = productController;
