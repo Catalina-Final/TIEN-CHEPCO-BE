@@ -18,12 +18,11 @@ productController.getProducts = catchAsync(async (req, res, next) => {
 });
 
 productController.getSingleProduct = catchAsync(async (req, res, next) => {
-    let product = await Product.findById(req.params.id)  //.populate("user");
+    const product = await Product.findById(req.params.id).populate('type');
     if (!product)
         return next(new AppError(404, "Product not found"));
-    product = product.toJSON();
-    // product.reviews = await Review.find({ product: product._id }) //.populate("user");
-    return sendResponse(res, 200, true, product, null, "get single product success");
+
+    return sendResponse(res, 200, true, product.toJSON(), null, "get single product success");
 });
 
 

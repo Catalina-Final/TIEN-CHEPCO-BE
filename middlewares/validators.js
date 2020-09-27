@@ -9,7 +9,6 @@ validators.validate = (validationArray) => async (req, res, next) => {
   const errors = validationResult(req);
   if (errors.isEmpty()) return next();
 
-  // console.log(errors);
   const extractedErrors = [];
   errors
     .array()
