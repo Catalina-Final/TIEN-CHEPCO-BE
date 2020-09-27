@@ -15,16 +15,13 @@ const Category = require("../models/Category");
 const adminController = {};
 
 adminController.adminGetProducts = catchAsync(async (red, res, next) => {
-    const totalProducts = await Product.find().populate("type")
+    const totalProducts = await Product.find().populate("type");
 
     return sendResponse(res, 200, true, { totalProducts }, null, "get all products success");
 
 })
 
 adminController.createNewProduct = catchAsync(async (req, res, next) => {
-
-
-
     const {
         name,
         description,
@@ -86,7 +83,7 @@ adminController.updateSingleProduct = catchAsync(async (req, res, next) => {
 
         },
         { new: true }
-    );
+    ).populate("type");
     if (!product)
         return next(
             new AppError(
